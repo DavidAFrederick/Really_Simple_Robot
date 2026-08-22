@@ -54,3 +54,11 @@ class LEDSubsystem(Subsystem):
        self.LED.setData(self.ledData)
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+   def red(self):
+       for i in range(self.kLEDBuffer):
+           hue = 0  # red
+           self.ledData[i].setHSV(int(hue), 255, 128)
+       self.LED.setData(self.ledData)
+     
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
