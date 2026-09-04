@@ -7,9 +7,14 @@ from commands2.button import JoystickButton
 
 from led_subsystem import LEDSubsystem
 from led_command import LEDCommand
-from drivetrain_subsystem import DriveTrain
+
+# from drivetrain_subsystem import DriveTrain
+from drivetrain_subsystem_with_counter import DriveTrain
+
 from teleop_drive_command import TeleopDrive
 from one_button_drive_command import DriveShortDistance
+
+from drivetrain_command_with_counter import DriveRobotXWheelCounts
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -32,6 +37,12 @@ class MyRobot(TimedCommandRobot):
         # Create a button object
         self.button_1 = JoystickButton(self.leftstick, 1)
         self.button_1.onTrue(DriveShortDistance(self.drivetrainSubSys))
+
+
+        self.button_2 = JoystickButton(self.leftstick, 2)
+        self.button_2.onTrue(DriveRobotXWheelCounts(self.drivetrainSubSys, 5, 0.5))
+
+        wpilib.DriverStation.silenceJoystickConnectionWarning(True)
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
