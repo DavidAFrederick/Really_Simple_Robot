@@ -25,8 +25,8 @@ class TeleopDrive(Command):
         # Axis 2: {self.controller.getRawAxis(2):.2f}  Axis 3: {self.controller.getRawAxis(3):.2f}  \
         # Axis 4: {self.controller.getRawAxis(4):.2f}  Axis 5: {self.controller.getRawAxis(5):.2f}  ")
 
-        print(f"Wheel rotations: Left:{self.drivetrain.get_left_side_encoder_count():.2f}\
-        Right:{self.drivetrain.get_right_side_encoder_count():.2f}  ")
+        # print(f"Wheel rotations: Left:{self.drivetrain.get_left_side_encoder_count():.2f}\
+        # Right:{self.drivetrain.get_right_side_encoder_count():.2f}  ")
 
     def isFinished(self) -> bool:
         return False
