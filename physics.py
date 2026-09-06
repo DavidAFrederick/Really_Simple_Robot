@@ -17,6 +17,9 @@ import typing
 if typing.TYPE_CHECKING:
     from robot import MyRobot
 
+#===(Simulated Gyro)=========================
+import wpilib.simulation as wsim 
+
 
 class PhysicsEngine:
 
@@ -53,6 +56,15 @@ class PhysicsEngine:
         self.left_talon_sim.orientation = sim.ChassisReference.COUNTER_CLOCKWISE_POSITIVE
         # right devices are CW+
         self.right_talon_sim.orientation = sim.ChassisReference.CLOCKWISE_POSITIVE
+
+        #===(Simulated Gyro)=========================
+        # Get the simulation Gyro for the navX
+        self.navx_sim = wsim.SimDeviceSim("navX-Sensor[4]")
+
+        # Get the specific handle for the Yaw angle
+        if self.navx_sim:
+           self.sim_yaw = self.navx_sim.getDouble("Yaw")
+
 
     def update_sim(self, now: float, tm_diff: float) -> None:
         """
@@ -94,6 +106,14 @@ class PhysicsEngine:
             ),
             tm_diff,
         )
+
+               #===(Simulated Gyro)=========================
+        # Get the current robot pose (Pose2d), pull the rotation in degrees from it
+        pose = self.physics_controller.get_pose()
+        # Extract heading angle in degrees
+        sim_heading_degrees = pose.rotation().degrees()
+        self.sim_yaw.set(sim_heading_degrees)
+
 
     def meters_to_rotations(self, dist: float) -> float:
         circumference = self.wheel_radius * 2.0 * math.pi

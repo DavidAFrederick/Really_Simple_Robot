@@ -12,6 +12,9 @@ from drivetrain_subsystem import DriveTrain
 from teleop_drive_command import TeleopDrive
 from one_button_drive_command import DriveShortDistance
 
+#  Install real/simulation gyro py -3 -m pip install robotpy-navx
+import navx
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 class MyRobot(TimedCommandRobot):
@@ -36,6 +39,9 @@ class MyRobot(TimedCommandRobot):
 
         wpilib.DriverStation.silenceJoystickConnectionWarning(True)
 
+#===(Simulated Gyro)=========================
+        # Create the Gyro (Heading angle measurement)
+        self.gyro = navx.AHRS.create_spi()
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     def getAutonomousCommand(self) -> Command:

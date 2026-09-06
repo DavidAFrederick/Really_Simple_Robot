@@ -6,8 +6,10 @@
       }
     },
     "Other Devices": {
-      "window": {
-        "visible": false
+      "navX-Sensor[4]": {
+        "header": {
+          "open": true
+        }
       }
     },
     "Timing": {
