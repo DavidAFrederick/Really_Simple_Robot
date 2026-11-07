@@ -8,7 +8,8 @@ from commands2.button import JoystickButton
 from led_subsystem import LEDSubsystem
 from led_command import LEDCommand
 
-from drivetrain_subsystem import DriveTrain
+# from drivetrain_subsystem import DriveTrain
+from drivetrain_subsystem_with_counter import DriveTrain
 from teleop_drive_command import TeleopDrive
 from one_button_drive_command import DriveShortDistance
 
@@ -39,9 +40,9 @@ class MyRobot(TimedCommandRobot):
 
         wpilib.DriverStation.silenceJoystickConnectionWarning(True)
 
-#===(Simulated Gyro)=========================
-        # Create the Gyro (Heading angle measurement)
-        self.gyro = navx.AHRS.create_spi()
+# #===(Simulated Gyro)=========================
+#         # Create the Gyro (Heading angle measurement)
+#         self.gyro = navx.AHRS.create_spi()
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     def getAutonomousCommand(self) -> Command:

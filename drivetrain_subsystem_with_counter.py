@@ -9,6 +9,7 @@ from phoenix6.hardware.talon_fx import TalonFX
 from phoenix6.signals.spn_enums import (InvertedValue, NeutralModeValue, FeedbackSensorSourceValue)
 from phoenix6.controls import DutyCycleOut
 from phoenix6 import StatusCode
+import navx
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -21,6 +22,11 @@ class DriveTrain(Subsystem):
         self.__configure_left_side_drive()
         self.__configure_right_side_drive()
         print ("DriveTrain  Subsystem Initialization complete")
+
+        #===(Simulated Gyro)=========================
+        # Create the Gyro (Heading angle measurement)
+        self.gyro = navx.AHRS.create_spi()
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -99,6 +105,8 @@ class DriveTrain(Subsystem):
         self.left_leader_motor.set_control(self.left_percent_out)
         self.right_leader_motor.set_control(self.right_percent_out)
 
+        self.get_gyro_heading()
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
    ###########################  Drive Encoder methods #######################
@@ -116,6 +124,21 @@ class DriveTrain(Subsystem):
 
     def reset_right_side_encoder_count(self):
         self.right_leader_motor.set_position(0)    #  Reset the encoder to  zero
+
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+   ###########################  Gyro methods #######################
+
+    def get_gyro_heading(self) -> float:
+        yaw_angle = self.gyro.getYaw()
+        print(f"Heading:  {yaw_angle:.2f}")
+        return yaw_angle
+
+    def reset_gyro_heading(self):
+        self.gyro.reset()
+        print(f"Gyro Reset")
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
