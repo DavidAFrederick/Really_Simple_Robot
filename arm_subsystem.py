@@ -12,6 +12,8 @@ import rev
 This Arm Subsystem consists of a standard 775 motor driving a Rev Robotics Gearbox.
 The 775 motor is controlled by a CTRE Talon SRX.
 Two shaft encoders are mounted on the output of the gearbox.
+Two Beam Brakes are positioned at the ends of the range of motion (about 0 and 45 degrees).
+The Beam Brakes provide a low signal on Digital Input/Output (DI/O) when the beam is broken.
 
 One encoder is a Rev Robotics REV-11-1271 Through Bore Encoder. 
 This encoder can operate in two modes; Absolute encoder mode and standard quadurature encoder.
@@ -28,6 +30,12 @@ The CAN address of the MaxSpline Encoder is set using the Rev Robotics Hardware 
 Since Rev Robotics is cheap, they did not put a USB-C connector on the device.  We can either 
 a third party USB-CAN adaptor or place another Rev Robotics Device on the BUS and use it to
 connect to the encoder.
+
+
+Arm Software Requirements:
+1) The right joystick vertical axis controls the position of the arm.
+2) The arm rotation angle is limited to remain between the two beam breaks.
+
 
 '''
 
@@ -62,15 +70,18 @@ class Arm(Subsystem):
         # Optionally set a relative starting position (in rotations or units)
         self.spline_encoder.setPosition(0.0)
 
+        # - - Initialize the Beam Break Digital I/O - - - - - - - - - - - - - - - - - 
+
+        self.lowerlimit = wpilib.DigitalInput(1)
+        self.upperlimit = wpilib.DigitalInput(2)
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     def spin_arm_motor(self, speed: float) -> None:
         self.Arm_Motor.set(TalonSRXControlMode.PercentOutput, speed)
         wpilib.SmartDashboard.putNumber("Arm Motor Speed", speed)
 
-
     def read_through_shaft_encoder(self):
-        
         # Get the absolute position (returns a value from 0.0 to 1.0 for one full rotation)
         abs_position = self.encoder.get()
 
@@ -83,7 +94,6 @@ class Arm(Subsystem):
         wpilib.SmartDashboard.putNumber("Through Encoder Angle", angle_degrees)
 
     def read_can_shaft_encoder(self):
-
         # Retrieve values from the MAXSpline Encoder
         position = self.spline_encoder.getPosition()       # Relative position
         velocity = self.spline_encoder.getVelocity()       # Velocity
@@ -94,7 +104,13 @@ class Arm(Subsystem):
         wpilib.SmartDashboard.putNumber("Spline Velocity", velocity)
         wpilib.SmartDashboard.putNumber("Spline Abs Angle", absolute_angle)
 
- 
+    def get_upper_limit_sensor(self):
+        wpilib.SmartDashboard.putBoolean("Upper Limit", self.upperlimit)
+        return self.upperlimit
+
+    def get_lower_limit_sensor(self):
+        wpilib.SmartDashboard.putBoolean("Lower Limit", self.upperlimit)
+        return self.lowerlimit
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

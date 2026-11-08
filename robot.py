@@ -16,6 +16,9 @@ from one_button_drive_command import DriveShortDistance
 #  Install real/simulation gyro py -3 -m pip install robotpy-navx
 import navx
 
+from arm_command import ArmCommand
+from arm_subsystem import Arm
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 class MyRobot(TimedCommandRobot):
@@ -26,6 +29,7 @@ class MyRobot(TimedCommandRobot):
 
         # Create a joystick object
         self.leftstick = wpilib.Joystick(0)
+        self.rightstick = wpilib.Joystick(1)
 
         # Create a drivetrain object
         self.drivetrainSubSys: DriveTrain = DriveTrain()
@@ -37,6 +41,9 @@ class MyRobot(TimedCommandRobot):
         # Create a button object
         self.button_1 = JoystickButton(self.leftstick, 1)
         self.button_1.onTrue(DriveShortDistance(self.drivetrainSubSys))
+
+        self.arm_subsystem = Arm()
+        self.arm_subsystem.setDefaultCommand(ArmCommand(self.arm_subsystem, self.rightstick))
 
         wpilib.DriverStation.silenceJoystickConnectionWarning(True)
 
