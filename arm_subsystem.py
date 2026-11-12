@@ -6,7 +6,7 @@ from wpilib import SmartDashboard
 from phoenix5 import TalonSRX, TalonSRXConfiguration, ControlMode, TalonSRXControlMode
 
 import rev
-
+#  Needed to update pyproject.toml and syncing to add rev
 
 '''
 This Arm Subsystem consists of a standard 775 motor driving a Rev Robotics Gearbox.
@@ -54,12 +54,9 @@ class Arm(Subsystem):
 
         # Initialize the REV Through Bore Encoder on Digital Input (DIO) channel 0
         # Make sure the physical switch on the encoder is set to 'A'
-        self.encoder = wpilib.DutyCycleEncoder(0)
+        self.encoder = wpilib.DutyCycleEncoder(0,1,0.82)  ## Parmeters, Channel, rotations, position offset)
 
-        # Optional: Set the scale / distance per rotation (default is 0.0 to 1.0 per turn)
-        # To output in degrees (0.0 to 360.0):
-        self.encoder.setPositionOffset(0.0) # set zero offset if needed
-    
+        # self.encoder.setPositionOffset(0.0) #   <<< This approach is not supported     
 
         # - - Initialize the MaxSpline Encoder - - - - - - - - - - - - - - - - - - - - - - 
 
@@ -68,7 +65,7 @@ class Arm(Subsystem):
         self.spline_encoder = rev.SplineEncoder(12)
         
         # Optionally set a relative starting position (in rotations or units)
-        self.spline_encoder.setPosition(0.0)
+        # self.spline_encoder.setPosition(0.0)
 
         # - - Initialize the Beam Break Digital I/O - - - - - - - - - - - - - - - - - 
 
@@ -77,9 +74,10 @@ class Arm(Subsystem):
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    def spin_arm_motor(self, speed: float) -> None:
+    def set_arm_motor_speed(self, speed: float) -> None:
         self.Arm_Motor.set(TalonSRXControlMode.PercentOutput, speed)
-        wpilib.SmartDashboard.putNumber("Arm Motor Speed", speed)
+        wpilib.SmartDashboard.putString("Arm Motor Speed", f"{speed:.2f}")
+
 
     def read_through_shaft_encoder(self):
         # Get the absolute position (returns a value from 0.0 to 1.0 for one full rotation)
@@ -90,8 +88,8 @@ class Arm(Subsystem):
 
         # Print or use the position values in your robot logic
         # print(f"Absolute Position: {abs_position:.3f} | Angle: {angle_degrees:.1f}°")
-        wpilib.SmartDashboard.putNumber("Through Encoder Position", abs_position)
-        wpilib.SmartDashboard.putNumber("Through Encoder Angle", angle_degrees)
+        wpilib.SmartDashboard.putString("Through Encoder Position", f"{abs_position:.1f}")
+        wpilib.SmartDashboard.putString("Through Encoder Angle", f"{angle_degrees:.1f}")
 
     def read_can_shaft_encoder(self):
         # Retrieve values from the MAXSpline Encoder
@@ -99,18 +97,22 @@ class Arm(Subsystem):
         velocity = self.spline_encoder.getVelocity()       # Velocity
         absolute_angle = self.spline_encoder.getAbsolutePosition() # Absolute angle/position
 
-        # Print values to the driver station log / console
-        wpilib.SmartDashboard.putNumber("Spline Position", position)
-        wpilib.SmartDashboard.putNumber("Spline Velocity", velocity)
-        wpilib.SmartDashboard.putNumber("Spline Abs Angle", absolute_angle)
+        # # Print values to the driver station log / console
+        # wpilib.SmartDashboard.putNumber("Spline Position", position)
+        # wpilib.SmartDashboard.putNumber("Spline Velocity", velocity)
+        # wpilib.SmartDashboard.putNumber("Spline Abs Angle", absolute_angle)
+
+        wpilib.SmartDashboard.putString("Spline Position", f"{position:.1f}")
+        wpilib.SmartDashboard.putString("Spline Velocity", f"{velocity:.1f}")
+        wpilib.SmartDashboard.putString("Spline Abs Angle", f"{absolute_angle:.1f}")
 
     def get_upper_limit_sensor(self):
-        wpilib.SmartDashboard.putBoolean("Upper Limit", self.upperlimit)
-        return self.upperlimit
+        wpilib.SmartDashboard.putBoolean("Upper Limit", self.upperlimit.get())
+        return self.upperlimit.get()
 
     def get_lower_limit_sensor(self):
-        wpilib.SmartDashboard.putBoolean("Lower Limit", self.upperlimit)
-        return self.lowerlimit
+        wpilib.SmartDashboard.putBoolean("Lower Limit", self.lowerlimit.get())
+        return self.lowerlimit.get()
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

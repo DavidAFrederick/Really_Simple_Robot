@@ -17,8 +17,13 @@ class ArmCommand(Command):
         pass
 
     def execute(self):
-        speed_reduction = 0.5
-        arm_speed = self.right_joystick.getRawAxis(0) * speed_reduction
+        speed_reduction = 0.3
+        arm_speed = self.right_joystick.getRawAxis(5) * speed_reduction
+        # print (f"Arm Speed {arm_speed:.2f}")
+
+        self.arm_subsystem.read_through_shaft_encoder()
+        self.arm_subsystem.read_can_shaft_encoder()
+
 
         # Stop the motor from going past the limit BUT ALSO allow the arm to move away from the limit
         # Low / False means limit is reached
@@ -28,7 +33,7 @@ class ArmCommand(Command):
         if ((not self.arm_subsystem.get_lower_limit_sensor()) and (arm_speed < 0) ): 
             arm_speed = 0
 
-        self.arm_subsystem.Arm_Motor(arm_speed)
+        self.arm_subsystem.set_arm_motor_speed(arm_speed)
 
 
     def isFinished(self) -> bool:

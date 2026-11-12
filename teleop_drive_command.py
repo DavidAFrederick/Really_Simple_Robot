@@ -2,7 +2,7 @@ import wpilib
 import wpilib.drive
 from commands2 import Command
 from drivetrain_subsystem import DriveTrain
-import navx
+# import navx
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

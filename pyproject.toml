@@ -1,0 +1,60 @@
+#=(pyproject.toml)==============================================================
+#
+# Use this configuration file to control what RobotPy packages are installed
+# on your RoboRIO
+#
+
+
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "lambda-corps-2026"
+version = "0.1.0"
+description = "Lambda Corps FRC 2026 Robot Code"
+
+
+[tool.setuptools]
+packages = ["commands", "subsystems", "apriltag_viewer", "apriltag_viewer.camera", "apriltag_viewer.detection", "apriltag_viewer.field", "apriltag_viewer.gui", "apriltag_viewer.utils"]
+
+
+[project.scripts]
+apriltag-viewer = "apriltag_viewer.main:main"
+
+
+[tool.robotpy]
+
+
+# Version of robotpy this project depends on
+robotpy_version = "2026.2.2"
+
+
+# Which extra RobotPy components should be installed
+# -> equivalent to `pip install robotpy[extra1, ...]
+components = [
+    # "all",
+    "commands2",
+    # "cscore",
+    # "navx",
+    "phoenix5",
+    # "playingwithfusion",
+    "rev",
+    # "romi",
+    # "sim",
+    # "xrp",
+]
+
+
+# Other pip packages to install
+requires = [
+    "robotpy-ctre==2026.1.0.1",
+    "phoenix6~=26.1",
+    #"robotpy_pathplannerlib~=2026.1.1",
+    #"photonlibpy>=2026.0.1b38",
+    "robotpy-rev",
+]
+
+
+#===============================================================
