@@ -54,18 +54,27 @@ class Arm(Subsystem):
 
         # Initialize the REV Through Bore Encoder on Digital Input (DIO) channel 0
         # Make sure the physical switch on the encoder is set to 'A'
-        self.encoder = wpilib.DutyCycleEncoder(0,1,0.82)  ## Parmeters, Channel, rotations, position offset)
+        # self.encoder = wpilib.DutyCycleEncoder(0,1,0.82)  ## Parmeters, Channel, rotations, position offset) # Zero position = 5.1 degrees
+        # self.encoder = wpilib.DutyCycleEncoder(0,1,0.84)  ## Parmeters, Channel, rotations, position offset) # Zero position = -3 degrees
+        # self.encoder = wpilib.DutyCycleEncoder(0,1,0.83)  ## Parmeters, Channel, rotations, position offset) # Zero position = 1.2 degrees
+        # self.encoder = wpilib.DutyCycleEncoder(0,1,0.835)  ## Parmeters, Channel, rotations, position offset) # Zero position = 0.9 degrees
+        self.encoder = wpilib.DutyCycleEncoder(0,1,0.838)  ## Parmeters, Channel, rotations, position offset) # Zero position = 0.6 degrees
 
         # self.encoder.setPositionOffset(0.0) #   <<< This approach is not supported     
 
         # - - Initialize the MaxSpline Encoder - - - - - - - - - - - - - - - - - - - - - - 
 
         # Initialize the MAXSpline Encoder with its CAN device ID (e.g., ID 12)
-        # Note: Ensure REVLib / RobotPy-REV is installed and your CAN bus is configured.
         self.spline_encoder = rev.SplineEncoder(12)
         
-        # Optionally set a relative starting position (in rotations or units)
-        # self.spline_encoder.setPosition(0.0)
+        # Optional: Configure conversion factor (e.g., 360.0 for degrees, or 2 * math.pi for radians)
+        config = rev.DetachedEncoderConfig()
+        config.angleConversionFactor(360.0)  # Converts rotations to degrees [0, 360)
+        config.inverted(True)
+
+
+        # Apply configuration (automatically persists across power cycles)
+        self.spline_encoder.configure( config, rev.ResetMode.kResetSafeParameters)
 
         # - - Initialize the Beam Break Digital I/O - - - - - - - - - - - - - - - - - 
 
@@ -95,14 +104,17 @@ class Arm(Subsystem):
         # Retrieve values from the MAXSpline Encoder
         position = self.spline_encoder.getPosition()       # Relative position
         velocity = self.spline_encoder.getVelocity()       # Velocity
-        absolute_angle = self.spline_encoder.getAbsolutePosition() # Absolute angle/position
+        # absolute_angle = self.spline_encoder.getAbsolutePosition() # Absolute angle/position
+        raw_absolute_angle = self.spline_encoder.getAngle() * 360
+
+        absolute_angle =  raw_absolute_angle - 8   # Offset to make arm at lowest  position = 0
 
         # # Print values to the driver station log / console
         # wpilib.SmartDashboard.putNumber("Spline Position", position)
         # wpilib.SmartDashboard.putNumber("Spline Velocity", velocity)
         # wpilib.SmartDashboard.putNumber("Spline Abs Angle", absolute_angle)
 
-        wpilib.SmartDashboard.putString("Spline Position", f"{position:.1f}")
+        wpilib.SmartDashboard.putString("Spline Position", f"{position:.3f}")
         wpilib.SmartDashboard.putString("Spline Velocity", f"{velocity:.1f}")
         wpilib.SmartDashboard.putString("Spline Abs Angle", f"{absolute_angle:.1f}")
 
